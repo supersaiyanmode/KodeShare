@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Orange Mint 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20110807
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>{{DATA.paste.title|escape}} | {{DATA.paste.key.name}} - &lt;Kodeshare/&gt;</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/js/prettify/prettify.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="/js/prettify/prettify.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="/js/timeago.js"></script>
+<script type="text/javascript" >
+pasteid = '{{DATA.paste.key.name}}';
+$(function(){
+    prettyPrint();
+    $(".date").timeago();
+});
+function postComment(){
+    var comment = $("#txtComment").val();
+    var user = "{{DATA.user.nickname|escape}}";
+    $.post("/comment/",{"comment":comment, "pasteid":pasteid,"userAuthType":"google"},function(data){
+        if (data.result.toLowerCase() != "success")
+            return;
+        var str = '<div class="commentLeft"><div>' + comment + '</div>';
+        str += '<span style="color:#E0E0E0" class="date"title="' + new Date() +'"></span>';
+        str += '<span style="color:#E0E0E0"> by ' + user + '</span>';
+        str += '<div style="border-bottom:1px solid #B55100;clear:both"/></div>';
+        $("#divCommentWrap").append(str);
+        setTimeout(function(){$('.date').timeago();},1);
+    });
+    return false;
+};
+</script>
+</head>
+<body>
+<div id="wrapper">
+    <div id="header-wrapper">
+        <div id="header">
+            <div id="logo">
+                <h1><a href="/">&lt;Kodeshare/&gt;</a></h1>
+                <p>Paste n' share!</p>
+            </div>
+            <div id="menu">
+                <ul>
+                    <li><a href="/paste/">{{DATA.user.nickname|escape}}</a></li>
+                    <li class="current_page_item"><a href="/">New Paste</a></li>
+                    <li><a href="#">API</a></li>
+                    <li><a href="#">Downloads</a></li>
+                    {% if DATA.user.logoutURL %}
+                    <li><a href="{{DATA.user.logoutURL}}">Log out</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- end #header -->
+    <div id="page">
+        <div id="page-bgtop">
+            <div id="page-bgbtm">
+                <div id="sidebar">
+                    <ul>
+                        <li>
+                            <h2>Short Link</h2>
+                            <p>
+                                <input type="text" value="http://goo.gl/{{DATA.paste.key.name}}"/>
+                            </p>
+                        </li>
+                        <li>
+                            <h2>Comments</h2>
+                            {% if DATA.paste.commentsEnabled %}
+                            <div style="margin-left:30px" id="divCommentWrap">
+                                {% for x in DATA.comments %}
+                                <div class="commentLeft" style="clear:both">
+                                    <div>{{x.comment}}</div>
+                                    <span style="color:gray" class="date" title="{{x.time}}"></span>
+                                    <span style="color:gray"> by {{x.user}}</span>
+                                    <div style="border-bottom:1px solid #B55100;clear:both"></div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <form style="margin-left:30px" id="frmComment" onsubmit="postComment();return false" action="/comments/" method="post">
+                                <input type="text" id="txtComment" name="comment"/>
+                                <input type="submit" value="Post"/>
+                            </form>
+                            {% else %}
+                                <p>Grr.. Comments have been disabled by the posted! :-(</p>
+                            {% endif %}
+                            <div style="clear: both;">&nbsp;</div>
+                        </li>
+                    </ul>
+                </div>
+                <!-- end #sidebar -->
+                <div id="content">
+                    <div class="post">
+                        <h2 class="title">{{DATA.paste.title|escape}}</h2>
+                        <p class="meta">
+                            <span class="date" title="{{DATA.paste.time}}"></span>
+                            <span class="posted">Posted by <a href="#">{{DATA.paste.user.nickname}}</a></span>
+                        </p>
+                        <div class="entry" style="word-wrap:normal">
+                            <pre class="prettyprint linenums">
+{{DATA.paste.code|escape}}
+                            </pre>
+                        </div>
+                    </div>
+                    <div class="post">
+                        <h3 class="title">Raw Code</h3>
+                        <div class="entry">
+                            <textarea style="width:98%;height:200px;">{{DATA.paste.code|escape}}</textarea>
+                        </div>
+                    </div>
+
+                    <div style="clear: both;">&nbsp;</div>
+                </div>
+                <!-- end #content -->
+                
+                <div style="clear: both;">&nbsp;</div>
+            </div>
+        </div>
+    </div>
+    <!-- end #page -->
+</div>
+<div id="footer">
+    <p>Copyright (c) 2011 Sitename.com. All rights reserved. Design by <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.</p>
+</div>
+<!-- end #footer -->
+</body>
+</html>
